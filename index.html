@@ -1,21 +1,954 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mugen Power - Touched by Mugen | Professional ECU Tuning</title>
-    <meta name="description" content="Professional automotive tuning services. Unleash your engine's true potential with Mugen Power." />
-    <meta property="og:title" content="Mugen Power - Professional ECU Tuning" />
-    <meta property="og:description" content="Transform your vehicle with precision tuning by experts" />
-    <meta property="og:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mugen Power - Professional ECU Tuning" />
-    <meta name="twitter:description" content="Transform your vehicle with precision tuning by experts" />
-    <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mugen Power | Touched by Mugen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0a0e17;
+            --secondary: #00d9ff;
+            --accent: #ff005e;
+            --light: #f0f8ff;
+            --dark: #050811;
+            --gray: #1a1f2e;
+            --card-bg: rgba(10, 14, 23, 0.9);
+            --gradient: linear-gradient(135deg, #00d9ff, #0080ff, #a000ff);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--primary);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(160, 0, 255, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255, 0, 94, 0.05) 0%, transparent 50%);
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--secondary);
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        /* Header & Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: rgba(5, 8, 17, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--secondary);
+            background: rgba(0, 217, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 5%;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(5, 8, 17, 0.9) 0%, rgba(10, 14, 23, 0.7) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: #a0b3d0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+            border: none;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.6);
+        }
+
+        /* Sections */
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            position: relative;
+            color: white;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        section {
+            padding: 100px 5%;
+        }
+
+        /* Car Models */
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .car-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s;
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .car-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .car-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--primary));
+        }
+
+        .car-info {
+            padding: 25px;
+        }
+
+        .car-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .car-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a0b3d0;
+        }
+
+        /* Engine Tuning Section */
+        .engine-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .engine-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .engine-btn {
+            padding: 12px 25px;
+            background: rgba(26, 31, 46, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .engine-btn:hover, .engine-btn.active {
+            background: var(--gradient);
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(0, 217, 255, 0.4);
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .chart-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(26, 31, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .stat-card h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            padding: 60px 5% 30px;
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column p, .footer-column a {
+            color: #a0b3d0;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 50%;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--gradient);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0b3d0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            
+            .car-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(5, 8, 17, 0.95);
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: all 0.3s;
+                backdrop-filter: blur(10px);
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            section {
+                padding: 70px 5%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cta-button {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo-container">
+            <h1 class="logo">MUGEN POWER</h1>
+            <div class="subtitle">Touched by Mugen</div>
+        </div>
+        
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <nav>
+            <ul id="navMenu">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#models">Car Models</a></li>
+                <li><a href="#tuning">Engine Tuning</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>MAXIMUM PERFORMANCE<br><span style="font-size: 3rem;">REDEFINED</span></h1>
+        <p>Advanced ECU tuning and performance upgrades for your vehicle. Experience futuristic power gains with our cutting-edge tuning technology.</p>
+        <a href="#tuning" class="cta-button">EXPLORE TUNING OPTIONS</a>
+    </section>
+
+    <!-- Car Models Section -->
+    <section id="models">
+        <h2 class="section-title">CAR MODELS</h2>
+        <div class="car-grid">
+            <!-- Car cards will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Engine Tuning Section -->
+    <section id="tuning">
+        <h2 class="section-title">ENGINE TUNING & GAINS</h2>
+        
+        <div class="engine-container">
+            <div class="engine-selector" id="engineSelector">
+                <!-- Engine buttons will be generated by JavaScript -->
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title" id="chartTitle">Select an Engine Model</h3>
+                <canvas id="powerChart"></canvas>
+                
+                <div class="stats-grid" id="engineStats">
+                    <!-- Engine stats will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>MUGEN POWER</h3>
+                <p>Touched by Mugen - Advanced vehicle tuning and performance upgrades since 2010.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <a href="#home">Home</a>
+                <a href="#models">Car Models</a>
+                <a href="#tuning">Engine Tuning</a>
+                <a href="#about">About Us</a>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Services</h3>
+                <a href="#">ECU Remapping</a>
+                <a href="#">Dyno Testing</a>
+                <a href="#">Performance Upgrades</a>
+                <a href="#">Custom Tuning</a>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Tuning Street 15, 71000 Sarajevo</p>
+                <p><i class="fas fa-phone"></i> +387 33 123 456</p>
+                <p><i class="fas fa-envelope"></i> info@mugenpower.ba</p>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 Mugen Power. All rights reserved. | Designed with futuristic vision
+        </div>
+    </footer>
+
+    <script>
+        // Background particles animation
+        function createParticles() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size and position
+                const size = Math.random() * 5 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 20 + 10;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random color from gradient
+                const colors = ['#00d9ff', '#0080ff', '#a000ff', '#ff005e'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                
+                bgAnimation.appendChild(particle);
+            }
+        }
+        
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            menuToggle.innerHTML = navMenu.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Car models data
+        const carModels = [
+            {
+                id: 1,
+                name: "BMW M5 Competition",
+                image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 625,
+                torque: 750,
+                tuning: "Stage 2+",
+                price: "€2,499"
+            },
+            {
+                id: 2,
+                name: "Mercedes-AMG C63 S",
+                image: "https://images.unsplash.com/photo-1563720223485-8d6d5c5f3104?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 510,
+                torque: 700,
+                tuning: "Stage 1",
+                price: "€1,899"
+            },
+            {
+                id: 3,
+                name: "Audi RS6 Avant",
+                image: "https://images.unsplash.com/photo-1606664515524-ed1f569ea7db?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 600,
+                torque: 800,
+                tuning: "Stage 3",
+                price: "€3,299"
+            },
+            {
+                id: 4,
+                name: "Porsche 911 Turbo S",
+                image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 650,
+                torque: 800,
+                tuning: "Stage 2",
+                price: "€2,899"
+            },
+            {
+                id: 5,
+                name: "VW Golf R",
+                image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 320,
+                torque: 420,
+                tuning: "Stage 2",
+                price: "€1,499"
+            },
+            {
+                id: 6,
+                name: "Audi S3",
+                image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800",
+                hp: 310,
+                torque: 400,
+                tuning: "Stage 1",
+                price: "€1,299"
+            }
+        ];
+        
+        // Engine tuning data with performance gains
+        const engines = [
+            {
+                id: 1,
+                name: "BMW B58 3.0L",
+                stockHP: 382,
+                tunedHP: 480,
+                stockTorque: 500,
+                tunedTorque: 600,
+                gains: [382, 410, 430, 450, 470, 480],
+                labels: ["Stock", "Stage 1", "Stage 1+", "Stage 2", "Stage 2+", "Stage 3"],
+                color: "#0066B3"
+            },
+            {
+                id: 2,
+                name: "Mercedes M177 4.0L",
+                stockHP: 476,
+                tunedHP: 580,
+                stockTorque: 650,
+                tunedTorque: 800,
+                gains: [476, 510, 530, 550, 570, 580],
+                labels: ["Stock", "Stage 1", "Stage 1+", "Stage 2", "Stage 2+", "Stage 3"],
+                color: "#00A0A6"
+            },
+            {
+                id: 3,
+                name: "Audi EA855 2.5L",
+                stockHP: 400,
+                tunedHP: 520,
+                stockTorque: 480,
+                tunedTorque: 600,
+                gains: [400, 440, 460, 490, 510, 520],
+                labels: ["Stock", "Stage 1", "Stage 1+", "Stage 2", "Stage 2+", "Stage 3"],
+                color: "#C30000"
+            },
+            {
+                id: 4,
+                name: "VW EA888 2.0L",
+                stockHP: 310,
+                tunedHP: 400,
+                stockTorque: 400,
+                tunedTorque: 520,
+                gains: [310, 340, 360, 380, 390, 400],
+                labels: ["Stock", "Stage 1", "Stage 1+", "Stage 2", "Stage 2+", "Stage 3"],
+                color: "#1E5DC6"
+            }
+        ];
+        
+        // Populate car models
+        function populateCarModels() {
+            const carGrid = document.querySelector('.car-grid');
+            
+            carModels.forEach(car => {
+                const carCard = document.createElement('div');
+                carCard.className = 'car-card';
+                carCard.innerHTML = `
+                    <div class="car-image" style="background-image: url('${car.image}')">
+                        <div class="car-overlay"></div>
+                    </div>
+                    <div class="car-info">
+                        <h3>${car.name}</h3>
+                        <p>Advanced ECU tuning available with proven performance gains. ${car.tuning} package recommended.</p>
+                        <div class="car-stats">
+                            <div class="stat">
+                                <div class="stat-value">${car.hp} HP</div>
+                                <div class="stat-label">Power</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${car.torque} Nm</div>
+                                <div class="stat-label">Torque</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${car.price}</div>
+                                <div class="stat-label">From</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                carGrid.appendChild(carCard);
+            });
+        }
+        
+        // Populate engine selector
+        function populateEngineSelector() {
+            const engineSelector = document.getElementById('engineSelector');
+            
+            engines.forEach((engine, index) => {
+                const engineBtn = document.createElement('button');
+                engineBtn.className = index === 0 ? 'engine-btn active' : 'engine-btn';
+                engineBtn.textContent = engine.name;
+                engineBtn.dataset.engineId = engine.id;
+                
+                engineBtn.addEventListener('click', () => {
+                    // Update active button
+                    document.querySelectorAll('.engine-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    engineBtn.classList.add('active');
+                    
+                    // Update chart
+                    updateChart(engine);
+                    
+                    // Update stats
+                    updateEngineStats(engine);
+                });
+                
+                engineSelector.appendChild(engineBtn);
+            });
+        }
+        
+        // Initialize chart
+        let powerChart;
+        const ctx = document.getElementById('powerChart').getContext('2d');
+        
+        function initializeChart() {
+            powerChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: engines[0].labels,
+                    datasets: [{
+                        label: 'Horsepower (HP)',
+                        data: engines[0].gains,
+                        borderColor: engines[0].color,
+                        backgroundColor: `${engines[0].color}20`,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: engines[0].color,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#a0b3d0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#a0b3d0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Horsepower (HP)',
+                                color: '#a0b3d0'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Update chart title
+            document.getElementById('chartTitle').textContent = `${engines[0].name} - Performance Gains`;
+            
+            // Update engine stats
+            updateEngineStats(engines[0]);
+        }
+        
+        // Update chart with new engine data
+        function updateChart(engine) {
+            powerChart.data.labels = engine.labels;
+            powerChart.data.datasets[0].data = engine.gains;
+            powerChart.data.datasets[0].borderColor = engine.color;
+            powerChart.data.datasets[0].backgroundColor = `${engine.color}20`;
+            powerChart.data.datasets[0].pointBackgroundColor = engine.color;
+            powerChart.update();
+            
+            // Update chart title
+            document.getElementById('chartTitle').textContent = `${engine.name} - Performance Gains`;
+        }
+        
+        // Update engine stats
+        function updateEngineStats(engine) {
+            const engineStats = document.getElementById('engineStats');
+            engineStats.innerHTML = '';
+            
+            const stats = [
+                { label: "Stock Power", value: `${engine.stockHP} HP`, icon: "fa-horse-head" },
+                { label: "Tuned Power", value: `${engine.tunedHP} HP`, icon: "fa-bolt" },
+                { label: "Power Gain", value: `${engine.tunedHP - engine.stockHP} HP`, icon: "fa-arrow-up" },
+                { label: "Stock Torque", value: `${engine.stockTorque} Nm`, icon: "fa-cogs" },
+                { label: "Tuned Torque", value: `${engine.tunedTorque} Nm`, icon: "fa-tachometer-alt" },
+                { label: "Torque Gain", value: `${engine.tunedTorque - engine.stockTorque} Nm`, icon: "fa-arrow-up" }
+            ];
+            
+            stats.forEach(stat => {
+                const statCard = document.createElement('div');
+                statCard.className = 'stat-card';
+                statCard.innerHTML = `
+                    <i class="fas ${stat.icon} fa-2x" style="color: ${engine.color}; margin-bottom: 15px;"></i>
+                    <h4>${stat.label}</h4>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary);">${stat.value}</div>
+                `;
+                engineStats.appendChild(statCard);
+            });
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            populateCarModels();
+            populateEngineSelector();
+            initializeChart();
+        });
+        
+        // Add scroll effect to header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.backgroundColor = 'rgba(5, 8, 17, 0.95)';
+                header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.backgroundColor = 'rgba(5, 8, 17, 0.9)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
 </html>
